@@ -1,0 +1,12 @@
+{
+  "name": "Juspay DS  Usage Checker",
+  "id": "1423994257076130238",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "editorType": ["figma"],
+  "documentAccess": "dynamic-page",
+  "networkAccess": {
+    "allowedDomains": ["https://cdnjs.cloudflare.com"]
+  }
+}

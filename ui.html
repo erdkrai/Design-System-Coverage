@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <!-- Font Awesome -->
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        background-color: #f9f9f9; /* Light background for contrast */
+        padding: 20px;
+        width: auto; /* Allow width to hug content */
+        height: auto; /* Allow height to hug content */
+        overflow-y: auto; /* Allow scrolling if content overflows */
+        border-radius: 8px; /* Rounded corners for the entire window */
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+      }
+
+      button {
+        background: linear-gradient(
+          145deg,
+          #007bff,
+          #0056b3
+        ); /* Gradient from light to dark blue */
+        border: none;
+        border-radius: 10px; /* Rounded button */
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-bottom: 32px; /* Space below button */
+        box-shadow: 5px 5px 10px rgba(0, 123, 255, 0.2),
+          /* Light shadow */ -5px -5px 10px rgba(255, 255, 255, 0.9); /* Light highlight for 3D effect */
+        color: white; /* White text color */
+      }
+
+      /* Styling for the bar graph */
+      .bar-graph {
+        width: 100%;
+        background-color: #ededed; /* Base background */
+        border-radius: 99px;
+        margin-top: 40px;
+        overflow: hidden; /* Ensure rounded corners */
+      }
+
+      .bar {
+        height: 12px; /* Increased height for better visibility */
+        border-radius: 99px;
+        transition: width 0.4s; /* Smooth transition for width change */
+        width: 0; /* Start from 0 width */
+        background-color: #4caf50; /* Default background color */
+      }
+
+      /* Enhanced hero content styling */
+      .hero-section {
+        background-color: #fcfcfc; /* Light blue background for coverage */
+        padding: 24px;
+        border-radius: 8px;
+        box-shadow: var(--Shadow-General-sm-x1, 0px)
+            var(--Shadow-General-sm-y1, 1px) var(--Shadow-General-sm-blur1, 2px)
+            var(--Shadow-General-sm-spread1, -1px)
+            var(--Shadow-General-sm-color1, rgba(0, 0, 0, 0.1)),
+          var(--Shadow-General-sm-x2, 0px) var(--Shadow-General-sm-y2, 1px)
+            var(--Shadow-General-sm-blur2, 3px)
+            var(--Shadow-General-sm-spread2, 0px)
+            var(--Shadow-General-sm-color2, rgba(16, 24, 40, 0.1));
+        margin-bottom: 24px; /* Space below */
+        text-align: center; /* Center content */
+        position: relative; /* Position for pseudo-elements */
+        border: 1px solid #e1e1e1; /* Subtle border */
+      }
+
+      .hero-section h3 {
+        margin: 0; /* Remove default margin */
+        font-size: 24px; /* Larger font size for percentage */
+        color: #111111; /* Darker text for counts */
+        font-weight: bold; /* Bold heading for emphasis */
+      }
+
+      /* Highlighting percentage display */
+      .percentage-display {
+        font-size: 20px; /* Slightly larger font size for percentage */
+        font-weight: bold; /* Bold font for emphasis */
+        color: #111111; /* Default text color */
+      }
+
+      /* Count section styling */
+      .count-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* Two columns */
+        gap: 24px; /* Space between boxes */
+        margin-top: 24px;
+      }
+
+      .count-box {
+        background-color: #f2f2f2; /* Light grey background for coverage */
+        padding: 16px;
+        border-radius: 8px;
+        text-align: center; /* Center content */
+        box-shadow: var(--Shadow-General-xs-x, 0px)
+          var(--Shadow-General-xs-y, 1px) var(--Shadow-General-xs-blur, 2px) 0px
+          var(--Shadow-General-xs-color, rgba(0, 0, 0, 0.08));
+        border: 1px solid #e1e1e1; /* Subtle border */
+      }
+
+      .count-box h3 {
+        margin: 0; /* Remove default margin */
+        font-size: 20px; /* Smaller font size for counts */
+        color: #111111; /* Darker text for counts */
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+      }
+
+      .modal-content {
+        background-color: #fcfcfc;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 500px;
+        max-height: 75vh;
+        border-radius: 8px;
+        box-shadow: var(--Shadow-General-xl-x1, 0px)
+            var(--Shadow-General-xl-y1, 10px)
+            var(--Shadow-General-xl-blur1, 10px)
+            var(--Shadow-General-xl-spread1, 0px)
+            var(--Shadow-General-xl-color1, rgba(0, 0, 0, 0.04)),
+          var(--Shadow-General-xl-x2, 0px) var(--Shadow-General-xl-y2, 20px)
+            var(--Shadow-General-xl-blur2, 25px)
+            var(--Shadow-General-xl-spread2, -5px)
+            var(--Shadow-General-xl-color2, rgba(16, 24, 40, 0.1));
+      }
+
+      .modal-body {
+        overflow-y: auto;
+        max-height: calc(70vh - 50px); /* Adjust based on your header height */
+      }
+
+      .close {
+        color: #c7c7c7;
+        float: right;
+        font-size: 28px;
+        cursor: pointer;
+      }
+
+      .close:hover,
+      .close:focus {
+        color: #525252;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      /* Additional styles for better appearance */
+      #nonDesignSystemList {
+        padding-left: 24px;
+        margin: 0;
+        font-size: 14px;
+        color: #454545;
+      }
+
+      #nonDesignSystemList li {
+    margin-bottom: 12px; /* Adds 10px spacing between list items */
+  }
+
+      html {
+        scrollbar-color: #ededed #e0e0e0;
+      }
+
+      #nonDesignSystemBox:hover {
+        background: #ffffff;
+        border-color: #e1e1e1;
+        box-shadow: var(--Shadow-General-md-x1, 0px)
+            var(--Shadow-General-md-y1, 2px) var(--Shadow-General-md-blur1, 4px)
+            var(--Shadow-General-md-spread1, -2px)
+            var(--Shadow-General-md-color1, rgba(0, 0, 0, 0.05)),
+          var(--Shadow-General-md-x2, 0px) var(--Shadow-General-md-y2, 4px)
+            var(--Shadow-General-md-blur2, 6px)
+            var(--Shadow-General-md-spread2, -1px)
+            var(--Shadow-General-md-color2, rgba(16, 24, 40, 0.1));
+      }
+    </style>
+  </head>
+
+  <body>
+    <center><button id="check">Check Components</button></center>
+
+    <!-- Hero Section for Percentage -->
+    <div id="percentageContainer" class="hero-section" style="display: none">
+      <strong style="font-size: 16px; color: #111111; line-height: 22px"
+        >Coverage of <span id="artboardName"></span
+      ></strong>
+      <div class="bar-graph">
+        <div id="percentageBar" class="bar" style="width: 0%"></div>
+      </div>
+      <p class="percentage-display" id="percentageDisplay">0%</p>
+      <p
+        id="emojiDisplay"
+        style="font-size: 32px; margin-top: 32px; margin-bottom: 0px"
+      ></p>
+      <!-- Emoji display -->
+    </div>
+
+    <!-- Count Section -->
+    <div id="countContainer" class="count-container" style="display: none">
+      <div class="count-box">
+        <h3 id="totalLayersCount">0</h3>
+        <p style="font-size: 14px; color: #6c6c6c">Total Layer Count</p>
+      </div>
+      <div class="count-box" id="nonDesignSystemBox" style="cursor: pointer">
+        <h3 id="nonDesignSystemCount">0</h3>
+        <p style="font-size: 14px; color: #6c6c6c">
+          Non-Design System Components
+        </p>
+      </div>
+    </div>
+
+    <script>
+      document.getElementById("check").onclick = () => {
+        parent.postMessage(
+          { pluginMessage: { type: "check-components" } },
+          "*"
+        );
+      };
+
+      onmessage = (event) => {
+        const message = event.data.pluginMessage;
+        const totalLayersCount = document.getElementById("totalLayersCount");
+        const nonDesignSystemCount = document.getElementById(
+          "nonDesignSystemCount"
+        );
+        const countContainer = document.getElementById("countContainer");
+        const percentageContainer = document.getElementById(
+          "percentageContainer"
+        );
+        const percentageBar = document.getElementById("percentageBar");
+        const percentageDisplay = document.getElementById("percentageDisplay");
+        const emojiDisplay = document.getElementById("emojiDisplay"); // Emoji display element
+        // const artboardNameContainer = document.getElementById('artboardNameContainer');
+        const artboardName = document.getElementById("artboardName");
+
+        if (message.error) {
+          alert(message.error);
+        } else {
+          // artboardNameContainer.style.display = 'block';
+          artboardName.textContent = message.artboardName;
+          totalLayersCount.textContent = message.totalLayers;
+          nonDesignSystemCount.textContent = message.nonDesignSystem;
+          countContainer.style.display = "grid"; // Show count section
+
+          // Update percentage bar
+          const percentage = message.percentage;
+          percentageBar.style.width = percentage + "%";
+          percentageDisplay.textContent = percentage + "%";
+
+          // Set color and emoji based on percentage
+          if (percentage < 50) {
+            percentageBar.style.backgroundColor = "#f44336"; // Red
+            percentageDisplay.style.color = "#f44336"; // Red text
+            emojiDisplay.textContent = "😢"; // Crying emoji
+          } else if (percentage >= 50 && percentage < 70) {
+            percentageBar.style.backgroundColor = "#F79009"; // Orange
+            percentageDisplay.style.color = "#F79009"; // Orange text
+            emojiDisplay.textContent = "😞"; // Sad emoji
+          } else if (percentage >= 70 && percentage < 80) {
+            percentageBar.style.backgroundColor = "#44C5B1"; // Orange-yellow shade
+            percentageDisplay.style.color = "#44C5B1"; // Orange-yellow text
+            emojiDisplay.textContent = "😀"; // Happy emoji
+          } else {
+            percentageBar.style.backgroundColor = "#4caf50"; // Green
+            percentageDisplay.style.color = "#4caf50"; // Green text
+            emojiDisplay.textContent = "🎉"; // Party emoji
+          }
+
+          percentageContainer.style.display = "block"; // Show percentage section
+
+          const nonDesignSystemList = document.getElementById(
+            "nonDesignSystemList"
+          );
+          nonDesignSystemList.innerHTML = "";
+          message.nonDesignSystemComponentsList.forEach((component) => {
+            const li = document.createElement("li");
+            li.textContent = component;
+            nonDesignSystemList.appendChild(li);
+          });
+        }
+      };
+
+      function setupModal() {
+        const modal = document.getElementById("modal");
+        const nonDesignSystemBox =
+          document.getElementById("nonDesignSystemBox");
+        const closeBtn = document.getElementsByClassName("close")[0];
+
+        if (nonDesignSystemBox) {
+          nonDesignSystemBox.onclick = function () {
+            if (modal) modal.style.display = "block";
+          };
+        }
+
+        if (closeBtn) {
+          closeBtn.onclick = function () {
+            if (modal) modal.style.display = "none";
+          };
+        }
+
+        window.onclick = function (event) {
+          if (event.target == modal) {
+            modal.style.display = "none";
+          }
+        };
+      }
+
+      // Call setupModal when the DOM is fully loaded
+      document.addEventListener("DOMContentLoaded", setupModal);
+    </script>
+
+    <div id="modal" class="modal" style="display: none">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <p
+          style="
+            font-size: 18px;
+            font-weight: 600;
+            color: #111111;
+            margin-top: 8px;
+          "
+        >
+          Non-Design System Components
+        </p>
+        <div class="modal-body">
+          <ol id="nonDesignSystemList"></ol>
+        </div>
+      </div>
+    </div>
+    
+  </body>
+</html>
