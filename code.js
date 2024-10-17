@@ -1,11 +1,6 @@
 // Show the plugin UI
 figma.showUI(__html__, { width: 420, height: 530 });
 
-// Variables for correct styles from the Dashboard Design System
-const allowedTextStyles = ["TextStyleID1", "TextStyleID2"]; // Add your allowed text style IDs here
-const allowedShadowStyles = ["ShadowStyleID1", "ShadowStyleID2"]; // Add your allowed shadow style IDs here
-const allowedColorVariables = ["ColorVariableID1", "ColorVariableID2"]; // Add your allowed color variable IDs here
-
 // Listen for messages from the UI
 figma.ui.onmessage = async (msg) => {
   if (msg.type === "check-components") {
